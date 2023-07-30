@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">Mahoulist</string>
+    <string name="auth_url">"%sauthorize?response_type=%s&amp;client_id=%s&amp;code_challenge=%s"</string>
+    <string name="no_browser_was_found">No browser was found</string>
+    <string name="authorization_header">Bearer %s</string>
 </resources>

@@ -1,4 +1,4 @@
-package me.fernandesleite.mahoulist.ui.theme
+package me.fernandesleite.mahoulist.core.ui.theme.theme
 
 import android.app.Activity
 import android.os.Build

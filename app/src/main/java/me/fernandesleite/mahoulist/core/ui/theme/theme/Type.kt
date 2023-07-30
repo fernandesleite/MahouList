@@ -1,4 +1,4 @@
-package me.fernandesleite.mahoulist.ui.theme
+package me.fernandesleite.mahoulist.core.ui.theme.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
