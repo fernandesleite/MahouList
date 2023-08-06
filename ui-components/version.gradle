@@ -1,0 +1,10 @@
+ext {
+    corektxVersion = '1.10.1'
+    lifecycleRuntimeKtx = '2.3.1'
+    junitVersion = '4.13.2'
+    extJunitVersion = '1.1.5'
+    espressoCoreVersion = '3.5.1'
+    composeVersion = '1.7.2'
+    composeBomVersion = '2022.10.00'
+    coilVersion = '2.4.0'
+}
