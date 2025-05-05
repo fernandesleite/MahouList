@@ -4,5 +4,6 @@ enum class UiState {
     INIT,
     LOADING,
     CONTENT,
-    ERROR
+    ERROR,
+    CONTENT_NO_USER
 }

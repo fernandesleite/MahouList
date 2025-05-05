@@ -6,7 +6,9 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import me.fernandesleite.mahoulist.core.di.qualifier.NoTokenRefresh
 import me.fernandesleite.mahoulist.core.di.qualifier.TokenRefresh
+import me.fernandesleite.mahoulist.feature.anime.data.AnimeService
 import me.fernandesleite.mahoulist.feature.auth.data.OAuthService
+import me.fernandesleite.mahoulist.feature.user.data.UserService
 import retrofit2.Retrofit
 
 @Module
@@ -24,6 +26,16 @@ class ServiceModule {
     @Provides
     fun provideOAuthServiceRefresh(@TokenRefresh retrofit: Retrofit): OAuthService {
         return retrofit.create(OAuthService::class.java)
+    }
+
+    @Provides
+    fun provideAnimeService(@TokenRefresh retrofit: Retrofit): AnimeService {
+        return retrofit.create(AnimeService::class.java)
+    }
+
+    @Provides
+    fun provideUserService(@TokenRefresh retrofit: Retrofit): UserService {
+        return retrofit.create(UserService::class.java)
     }
 }
 

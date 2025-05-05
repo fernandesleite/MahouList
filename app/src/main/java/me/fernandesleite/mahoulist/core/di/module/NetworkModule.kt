@@ -28,10 +28,12 @@ import okio.Buffer
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 
+
 @Module(includes = [ServiceModule::class])
 @InstallIn(SingletonComponent::class)
 class NetworkModule {
     companion object {
+        private const val UNAUTHORIZED_ERROR = 401
         private const val BASE_URL = "https://api.myanimelist.net/v2/"
     }
 
@@ -98,15 +100,14 @@ class NetworkModule {
     ): Interceptor {
         return Interceptor { chain ->
             chain.proceed(chain.request()).also { response ->
-                if (response.code != 200) {
+                if (response.code == UNAUTHORIZED_ERROR) {
                     runBlocking {
                         getRefreshTokenUseCase.invoke().collect {
                             saveRefreshTokenUseCase.invoke(
                                 BuildConfig.CLIENT_ID,
                                 AuthConstants.REFRESH_TOKEN,
                                 it
-                            ).collect {
-                            }
+                            )
                         }
                     }
                     chain.proceed(chain.request())

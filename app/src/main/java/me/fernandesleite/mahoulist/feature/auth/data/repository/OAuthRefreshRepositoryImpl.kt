@@ -29,8 +29,6 @@ class OAuthRefreshRepositoryImpl @Inject constructor(
             return@map response
         }
 
-
-
     override suspend fun getAuthRefreshToken(): Flow<String> {
         return flow {
             sharedPreferences

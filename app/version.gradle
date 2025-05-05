@@ -11,6 +11,7 @@ ext {
     extJunitVersion = '1.1.5'
     espressoCoreVersion = '3.5.1'
     composeVersion = '1.7.2'
+    composeNavigationVersion = '2.6.0'
     composeBomVersion = '2022.10.00'
     coilVersion = '2.4.0'
     roomVersion = "2.5.2"

@@ -1,5 +1,6 @@
 package me.fernandesleite.mahoulist.feature.auth.presentation.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -10,8 +11,11 @@ import kotlinx.coroutines.launch
 import me.fernandesleite.mahoulist.BuildConfig
 import me.fernandesleite.mahoulist.core.extension.NetworkExtensions.onErrorDo
 import me.fernandesleite.mahoulist.core.ui.UiState
+import me.fernandesleite.mahoulist.feature.anime.data.model.remote.animeranking.AnimeRankingType
+import me.fernandesleite.mahoulist.feature.anime.domain.AnimeRepository
 import me.fernandesleite.mahoulist.feature.auth.domain.usecase.SaveAccessTokenUseCase
 import me.fernandesleite.mahoulist.feature.auth.utils.AuthConstants
+import me.fernandesleite.mahoulist.feature.user.domain.GetUserUseCase
 import java.security.SecureRandom
 import java.util.Base64
 import javax.inject.Inject
@@ -20,6 +24,7 @@ import javax.inject.Inject
 class OAuthViewModel @Inject constructor(
     private val getAuthAccessToken: SaveAccessTokenUseCase,
     private val state: SavedStateHandle,
+    private val getUserUseCase: GetUserUseCase
 ) : ViewModel() {
 
     private val _codeChallenge = MutableStateFlow(AuthConstants.EMPTY_STRING)
@@ -27,6 +32,10 @@ class OAuthViewModel @Inject constructor(
 
     private val _uiState = MutableStateFlow(UiState.INIT)
     val uiState: StateFlow<UiState> = _uiState
+
+    private val _user = MutableStateFlow(AuthConstants.EMPTY_STRING)
+    val user: StateFlow<String> = _user
+
 
     fun getAuthAccessToken(code: String) {
         viewModelScope.launch {
@@ -42,6 +51,25 @@ class OAuthViewModel @Inject constructor(
                 }
             }
 
+        }
+    }
+
+    fun loadUser() {
+        viewModelScope.launch {
+            getUserUseCase.invoke()
+                .collect { response ->
+                    response.onErrorDo {
+                        if (response.codeError == 403) {
+                            _uiState.value = UiState.CONTENT_NO_USER
+                        } else {
+                            _uiState.value = UiState.ERROR
+                        }
+                    }
+                    response.data?.let { data ->
+                        _uiState.value = UiState.CONTENT
+                        _user.value = data.name
+                    }
+                }
         }
     }
 
