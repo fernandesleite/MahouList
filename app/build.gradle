@@ -65,6 +65,8 @@ dependencies {
     implementation "androidx.compose.ui:ui-tooling-preview"
     implementation "androidx.compose.material3:material3"
     implementation "androidx.navigation:navigation-compose:$composeNavigationVersion"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-compose:$lifecycleRuntimeKtx"
+
 
     // AndroidX libraries
     implementation "androidx.core:core-ktx:$corektxVersion"
@@ -73,6 +75,7 @@ dependencies {
     // Hilt
     implementation "com.google.dagger:hilt-android:$hiltVersion"
     kapt "com.google.dagger:hilt-compiler:$hiltVersion"
+    implementation "androidx.hilt:hilt-navigation-compose:1.0.0"
 
     // Networking
     implementation "com.squareup.retrofit2:retrofit:$retrofitVersion"

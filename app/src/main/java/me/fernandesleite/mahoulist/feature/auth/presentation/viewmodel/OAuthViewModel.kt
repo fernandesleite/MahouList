@@ -11,8 +11,7 @@ import kotlinx.coroutines.launch
 import me.fernandesleite.mahoulist.BuildConfig
 import me.fernandesleite.mahoulist.core.extension.NetworkExtensions.onErrorDo
 import me.fernandesleite.mahoulist.core.ui.UiState
-import me.fernandesleite.mahoulist.feature.anime.data.model.remote.animeranking.AnimeRankingType
-import me.fernandesleite.mahoulist.feature.anime.domain.AnimeRepository
+import me.fernandesleite.mahoulist.core.util.Response
 import me.fernandesleite.mahoulist.feature.auth.domain.usecase.SaveAccessTokenUseCase
 import me.fernandesleite.mahoulist.feature.auth.utils.AuthConstants
 import me.fernandesleite.mahoulist.feature.user.domain.GetUserUseCase
@@ -36,6 +35,9 @@ class OAuthViewModel @Inject constructor(
     private val _user = MutableStateFlow(AuthConstants.EMPTY_STRING)
     val user: StateFlow<String> = _user
 
+    init {
+        getCodeChallenge()
+    }
 
     fun getAuthAccessToken(code: String) {
         viewModelScope.launch {
@@ -46,8 +48,18 @@ class OAuthViewModel @Inject constructor(
                 code,
                 codeChallenge.value
             ).collect {
-                it.onErrorDo {
-                    _uiState.value = UiState.ERROR
+                when (it) {
+                    is Response.Success -> {
+                        Log.d("OAuthViewModel", "getAuthAccessToken: ${it.data}")
+                        _uiState.value = UiState.INIT
+                    }
+                    is Response.Loading -> {
+                        _uiState.value = UiState.LOADING
+                    }
+                    else -> {
+                        Log.d("OAuthViewModel", "getAuthAccessToken: ${it.codeError}")
+                        _uiState.value = UiState.ERROR
+                    }
                 }
             }
 
@@ -58,6 +70,9 @@ class OAuthViewModel @Inject constructor(
         viewModelScope.launch {
             getUserUseCase.invoke()
                 .collect { response ->
+                    if (response is Response.Loading) {
+                        _uiState.value = UiState.LOADING
+                    }
                     response.onErrorDo {
                         if (response.codeError == 403) {
                             _uiState.value = UiState.CONTENT_NO_USER
@@ -73,7 +88,7 @@ class OAuthViewModel @Inject constructor(
         }
     }
 
-    fun getCodeChallenge() {
+    private fun getCodeChallenge() {
         if (state.get<String>(AuthConstants.CODE_CHALLENGE_STATE) == null) {
             val secureRandom = SecureRandom()
             val codeVerifier = ByteArray(AuthConstants.CODE_CHALLENGE_BYTE_SIZE)
