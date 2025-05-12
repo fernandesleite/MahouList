@@ -64,7 +64,13 @@ class AnimeRepositoryImpl @Inject constructor(
         TODO("Not yet implemented")
     }
 
-    override suspend fun getSuggestedAnime(limit: Int, offset: Int): Flow<Response<List<Anime>>> {
-        TODO("Not yet implemented")
+    override suspend fun getSuggestedAnime(
+        pageSize: Int,
+        page: Int
+    ): Flow<Response<List<Anime>>> {
+        val offset = (page - 1) * pageSize
+        return flow {
+            emit(animeApi.getSuggestedAnime(pageSize, offset).data.map { it.anime })
+        }.getResponse()
     }
 }

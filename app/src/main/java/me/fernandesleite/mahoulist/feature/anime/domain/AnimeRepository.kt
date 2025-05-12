@@ -35,7 +35,7 @@ interface AnimeRepository {
     ): Flow<Response<List<Anime>>>
 
     suspend fun getSuggestedAnime(
-        limit: Int,
-        offset: Int
+        pageSize: Int,
+        page: Int
     ): Flow<Response<List<Anime>>>
 }
