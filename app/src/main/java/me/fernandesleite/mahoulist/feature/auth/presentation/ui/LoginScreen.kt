@@ -39,7 +39,8 @@ import me.fernandesleite.mahoulist.feature.auth.utils.AuthConstants
 
 @Composable
 fun LoginScreen(
-    viewModel: OAuthViewModel
+    viewModel: OAuthViewModel,
+    onLogin: () -> Unit = {},
 ) {
     val state by viewModel.uiState.collectAsState()
     val user by viewModel.user.collectAsState()
@@ -80,7 +81,7 @@ fun LoginScreen(
                     Text(text = "Continue as")
                     Text(text = user)
                     MahouButton(Modifier, "Log in") {
-
+                        onLogin()
                     }
                     Text(
                         modifier = Modifier.clickable {
