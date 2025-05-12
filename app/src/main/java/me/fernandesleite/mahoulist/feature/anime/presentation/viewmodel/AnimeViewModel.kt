@@ -23,11 +23,11 @@ class AnimeViewModel @Inject constructor(
 ): ViewModel() {
     private var currentPage = 1
 
-    private val _popular = MutableStateFlow<List<RankingData>>(emptyList())
-    val popularList: StateFlow<List<RankingData>> = _popular
+    private val _popular = MutableStateFlow<List<Anime>>(emptyList())
+    val popularList: StateFlow<List<Anime>> = _popular
 
-    private val _currentlyAiring = MutableStateFlow<List<RankingData>>(emptyList())
-    val currentlyAiringList: StateFlow<List<RankingData>> = _currentlyAiring
+    private val _currentlyAiring = MutableStateFlow<List<Anime>>(emptyList())
+    val currentlyAiringList: StateFlow<List<Anime>> = _currentlyAiring
 
     private val _suggested = MutableStateFlow<List<Anime>>(emptyList())
     val suggestedList: StateFlow<List<Anime>> = _suggested
@@ -63,17 +63,29 @@ class AnimeViewModel @Inject constructor(
                 }
 
                 popular.data?.let { data ->
-                    _popular.value = data
+                    _popular.value = data.sortedBy { it.ranking.rank }
+                        .map {
+                            Anime(
+                                id = it.anime.id,
+                                mainPicture = it.anime.mainPicture,
+                                title = it.anime.title
+                            )
+                        }
                 }
                 currentlyAiring.data?.let { data ->
-                    _currentlyAiring.value = data
+                    _currentlyAiring.value = data.sortedBy { it.ranking.rank }
+                        .map {
+                            Anime(
+                                id = it.anime.id,
+                                mainPicture = it.anime.mainPicture,
+                                title = it.anime.title
+                            )
+                        }
                 }
                 suggested.data?.let { data ->
                     _suggested.value = data
                 }
             }
-
-
 
             getPagedAnimeRankingUseCase.invoke(AnimeRankingType.ALL, currentPage).collect { response ->
                 response.onErrorDo {

@@ -2,8 +2,10 @@ package me.fernandesleite.mahoulist.core.navigation
 
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -23,7 +25,7 @@ fun MahoulistNavGraph(
     oAuthViewModel: OAuthViewModel? = null
 ) {
     NavHost(
-        modifier = modifier,
+        modifier = modifier.padding(horizontal = 16.dp, vertical = 8.dp),
         navController = navController,
         startDestination = Screen.Home.route,
         enterTransition = {
