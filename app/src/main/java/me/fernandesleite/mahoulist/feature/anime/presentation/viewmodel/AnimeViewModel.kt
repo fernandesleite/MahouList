@@ -9,8 +9,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import me.fernandesleite.mahoulist.core.extension.NetworkExtensions.onErrorDo
+import me.fernandesleite.mahoulist.core.ui.UiState
 import me.fernandesleite.mahoulist.feature.anime.data.model.remote.animeranking.AnimeRankingType
-import me.fernandesleite.mahoulist.feature.anime.data.model.remote.animeranking.RankingData
 import me.fernandesleite.mahoulist.feature.anime.data.model.remote.common.Anime
 import me.fernandesleite.mahoulist.feature.anime.domain.GetPagedAnimeRankingUseCase
 import me.fernandesleite.mahoulist.feature.anime.domain.GetPagedSuggestedUseCase
@@ -35,11 +35,18 @@ class AnimeViewModel @Inject constructor(
     private val _searchText = MutableStateFlow("")
     val searchText: StateFlow<String> = _searchText
 
+    private val _uiState = MutableStateFlow(UiState.LOADING)
+    val state: StateFlow<UiState> = _uiState
+
     fun sendText(text: String) {
         _searchText.value = text
     }
 
-    fun getTest() {
+    init {
+
+    }
+
+    fun getHomeContent() {
         viewModelScope.launch {
             val flow1 = getPagedAnimeRankingUseCase.invoke(AnimeRankingType.BY_POPULARITY, currentPage)
             val flow2 = getPagedAnimeRankingUseCase.invoke(AnimeRankingType.AIRING, currentPage)
@@ -86,6 +93,7 @@ class AnimeViewModel @Inject constructor(
                     _suggested.value = data
                 }
             }
+            _uiState.value = UiState.CONTENT
 
             getPagedAnimeRankingUseCase.invoke(AnimeRankingType.ALL, currentPage).collect { response ->
                 response.onErrorDo {

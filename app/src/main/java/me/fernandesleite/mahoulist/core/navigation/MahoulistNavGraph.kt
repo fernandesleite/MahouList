@@ -24,6 +24,8 @@ fun MahoulistNavGraph(
     navController: NavHostController,
     oAuthViewModel: OAuthViewModel? = null
 ) {
+    val viewModel = hiltViewModel<AnimeViewModel>()
+
     NavHost(
         modifier = modifier.padding(horizontal = 16.dp, vertical = 8.dp),
         navController = navController,
@@ -72,7 +74,6 @@ fun MahoulistNavGraph(
         composable(
             route = Screen.Home.route
         ) {
-            val viewModel = hiltViewModel<AnimeViewModel>()
             HomeScreen(viewModel, navController)
         }
         composable(
@@ -90,7 +91,6 @@ fun MahoulistNavGraph(
         composable(
             route = Screen.Search.route
         ) {
-            val viewModel = hiltViewModel<AnimeViewModel>()
             SearchScreen(viewModel, navController)
         }
     }
