@@ -1,8 +1,5 @@
 package me.fernandesleite.mahoulist.core.navigation
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Explore
@@ -18,15 +15,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.compose.ui.tooling.preview.Preview
 
 @Composable
 fun MahouNavigationBar(
-    navController: NavHostController
+    currentRoute: String?,
+    navigate: (String) -> Unit,
 ) {
-    val currentBackStack by navController.currentBackStackEntryAsState()
-    val currentRoute = currentBackStack?.destination?.route
 
     var selected by remember {
         mutableIntStateOf(0)
@@ -49,11 +44,11 @@ fun MahouNavigationBar(
         )
     )
     val showBottomBar = remember(currentRoute) {
-        currentRoute != Screen.Login.route &&
-                currentRoute != null &&
-                currentRoute != Screen.Search.route
+        navigationBarItems.any {
+            it.screen.route == currentRoute
+        }
     }
-   if(showBottomBar) {
+    if (showBottomBar) {
         BottomAppBar {
             NavigationBar {
                 navigationBarItems.forEachIndexed { index, item ->
@@ -61,10 +56,7 @@ fun MahouNavigationBar(
                         selected = selected == index,
                         onClick = {
                             selected = index
-                            navController.navigate(item.screen.route) {
-                                launchSingleTop = true
-                                restoreState = true
-                            }
+                            navigate(item.screen.route)
                         },
                         icon = {
                             Icon(
@@ -83,4 +75,13 @@ fun MahouNavigationBar(
             }
         }
     }
+}
+
+@Composable
+@Preview(showBackground = true, apiLevel = 34)
+fun MahouNavigationBarPreview() {
+    MahouNavigationBar(
+        currentRoute = Screen.Home.route,
+        navigate = {}
+    )
 }

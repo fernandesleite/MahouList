@@ -1,20 +1,21 @@
 package me.fernandesleite.mahoulist.core.navigation
 
-import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.layout.padding
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import me.fernandesleite.mahoulist.feature.anime.presentation.screen.ListScreen
 import me.fernandesleite.mahoulist.feature.anime.presentation.screen.HomeScreen
 import me.fernandesleite.mahoulist.feature.anime.presentation.screen.MyListScreen
 import me.fernandesleite.mahoulist.feature.anime.presentation.screen.SearchScreen
 import me.fernandesleite.mahoulist.feature.anime.presentation.screen.SeasonalScreen
 import me.fernandesleite.mahoulist.feature.anime.presentation.viewmodel.AnimeViewModel
+import me.fernandesleite.mahoulist.feature.anime.presentation.viewmodel.ListViewModel
 import me.fernandesleite.mahoulist.feature.auth.presentation.ui.LoginScreen
 import me.fernandesleite.mahoulist.feature.auth.presentation.viewmodel.OAuthViewModel
 
@@ -22,37 +23,24 @@ import me.fernandesleite.mahoulist.feature.auth.presentation.viewmodel.OAuthView
 fun MahoulistNavGraph(
     modifier: Modifier = Modifier,
     navController: NavHostController,
-    oAuthViewModel: OAuthViewModel? = null
+    oAuthViewModel: OAuthViewModel? = null,
 ) {
-    val viewModel = hiltViewModel<AnimeViewModel>()
+    val homeViewModel = hiltViewModel<AnimeViewModel>()
 
     NavHost(
-        modifier = modifier.padding(horizontal = 16.dp, vertical = 8.dp),
         navController = navController,
         startDestination = Screen.Home.route,
         enterTransition = {
-            slideIntoContainer(
-                AnimatedContentTransitionScope.SlideDirection.Start,
-                tween(1)
-            )
+            fadeIn(animationSpec = tween(0))
         },
         exitTransition = {
-            slideOutOfContainer(
-                AnimatedContentTransitionScope.SlideDirection.Start,
-                tween(0)
-            )
+            fadeOut(animationSpec = tween(0))
         },
         popEnterTransition = {
-            slideIntoContainer(
-                AnimatedContentTransitionScope.SlideDirection.End,
-                tween(0)
-            )
+            fadeIn(animationSpec = tween(0))
         },
         popExitTransition = {
-            slideOutOfContainer(
-                AnimatedContentTransitionScope.SlideDirection.End,
-                tween(0)
-            )
+            fadeOut(animationSpec = tween(0))
         }
     ) {
         composable(
@@ -74,24 +62,31 @@ fun MahoulistNavGraph(
         composable(
             route = Screen.Home.route
         ) {
-            HomeScreen(viewModel, navController)
+            HomeScreen(modifier, homeViewModel, navController)
         }
         composable(
             route = Screen.Seasonal.route
         ) {
             val viewModel = hiltViewModel<AnimeViewModel>()
-            SeasonalScreen(viewModel, navController)
+            SeasonalScreen(modifier, viewModel, navController)
         }
         composable(
             route = Screen.MyList.route
         ) {
             val viewModel = hiltViewModel<AnimeViewModel>()
-            MyListScreen(viewModel, navController)
+            MyListScreen(modifier, viewModel, navController)
         }
         composable(
             route = Screen.Search.route
         ) {
-            SearchScreen(viewModel, navController)
+            SearchScreen(homeViewModel, navController)
+        }
+        composable(
+            route = "${Screen.List.route}/{listType}"
+        ) {
+            val listType = it.arguments?.getString("listType")
+            val viewModel = hiltViewModel<ListViewModel>()
+            ListScreen(viewModel, navController, listType)
         }
     }
 }

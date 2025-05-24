@@ -35,6 +35,7 @@ import me.fernandesleite.mahoulist.feature.anime.data.model.remote.common.Anime
 
 @Composable
 fun BigImageCarousel(
+    modifier: Modifier = Modifier,
     title: String,
     animeList: List<Anime> = listOf(),
     onClickItem: (Anime) -> Unit = {},
@@ -43,6 +44,7 @@ fun BigImageCarousel(
         animeList.count()
     }
     Column(
+        modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {

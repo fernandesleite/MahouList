@@ -12,15 +12,13 @@ import me.fernandesleite.mahoulist.core.extension.NetworkExtensions.onErrorDo
 import me.fernandesleite.mahoulist.core.ui.UiState
 import me.fernandesleite.mahoulist.feature.anime.data.model.remote.animeranking.AnimeRankingType
 import me.fernandesleite.mahoulist.feature.anime.data.model.remote.common.Anime
-import me.fernandesleite.mahoulist.feature.anime.domain.GetPagedAnimeRankingUseCase
-import me.fernandesleite.mahoulist.feature.anime.domain.GetPagedSuggestedUseCase
+import me.fernandesleite.mahoulist.feature.anime.domain.GetPagedAnimeListUseCase
 import javax.inject.Inject
 
 @HiltViewModel
 class AnimeViewModel @Inject constructor(
-    private val getPagedAnimeRankingUseCase: GetPagedAnimeRankingUseCase,
-    private val getPagedSuggestedUseCase: GetPagedSuggestedUseCase,
-): ViewModel() {
+    private val getPagedAnimeListUseCase: GetPagedAnimeListUseCase,
+) : ViewModel() {
     private var currentPage = 1
 
     private val _popular = MutableStateFlow<List<Anime>>(emptyList())
@@ -32,25 +30,17 @@ class AnimeViewModel @Inject constructor(
     private val _suggested = MutableStateFlow<List<Anime>>(emptyList())
     val suggestedList: StateFlow<List<Anime>> = _suggested
 
-    private val _searchText = MutableStateFlow("")
-    val searchText: StateFlow<String> = _searchText
 
     private val _uiState = MutableStateFlow(UiState.LOADING)
     val state: StateFlow<UiState> = _uiState
 
-    fun sendText(text: String) {
-        _searchText.value = text
-    }
-
-    init {
-
-    }
 
     fun getHomeContent() {
         viewModelScope.launch {
-            val flow1 = getPagedAnimeRankingUseCase.invoke(AnimeRankingType.BY_POPULARITY, currentPage)
-            val flow2 = getPagedAnimeRankingUseCase.invoke(AnimeRankingType.AIRING, currentPage)
-            val flow3 = getPagedSuggestedUseCase.invoke(currentPage)
+            val flow1 =
+                getPagedAnimeListUseCase.invoke(AnimeRankingType.BY_POPULARITY, currentPage)
+            val flow2 = getPagedAnimeListUseCase.invoke(AnimeRankingType.AIRING, currentPage)
+            val flow3 = getPagedAnimeListUseCase.invoke(AnimeRankingType.SUGGESTED, currentPage)
 
             combine(flow1, flow2, flow3) { popular, currentlyAiring, suggested ->
                 Triple(popular, currentlyAiring, suggested)
@@ -61,47 +51,22 @@ class AnimeViewModel @Inject constructor(
 
                 popular.onErrorDo {
                     Log.d("TAG", "combine: $it")
+                    _uiState.value = UiState.ERROR
                 }
                 currentlyAiring.onErrorDo {
                     Log.d("TAG", "combine: $it")
+                    _uiState.value = UiState.ERROR
                 }
                 suggested.onErrorDo {
                     Log.d("TAG", "combine: $it")
+                    _uiState.value = UiState.ERROR
                 }
 
-                popular.data?.let { data ->
-                    _popular.value = data.sortedBy { it.ranking.rank }
-                        .map {
-                            Anime(
-                                id = it.anime.id,
-                                mainPicture = it.anime.mainPicture,
-                                title = it.anime.title
-                            )
-                        }
-                }
-                currentlyAiring.data?.let { data ->
-                    _currentlyAiring.value = data.sortedBy { it.ranking.rank }
-                        .map {
-                            Anime(
-                                id = it.anime.id,
-                                mainPicture = it.anime.mainPicture,
-                                title = it.anime.title
-                            )
-                        }
-                }
-                suggested.data?.let { data ->
-                    _suggested.value = data
-                }
-            }
-            _uiState.value = UiState.CONTENT
+                _popular.value = popular.data ?: emptyList()
+                _currentlyAiring.value = currentlyAiring.data ?: emptyList()
+                _suggested.value = suggested.data ?: emptyList()
 
-            getPagedAnimeRankingUseCase.invoke(AnimeRankingType.ALL, currentPage).collect { response ->
-                response.onErrorDo {
-
-                }
-                response.data?.let { data ->
-                    currentPage++
-                }
+                _uiState.value = UiState.CONTENT
             }
         }
     }
