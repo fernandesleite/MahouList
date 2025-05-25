@@ -26,12 +26,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
 import me.fernandesleite.mahoulist.feature.anime.data.model.remote.common.Anime
+import me.fernandesleite.mahoulist.feature.anime.presentation.screen.MahouImage
 
 @Composable
 fun BigImageCarousel(
@@ -55,14 +54,15 @@ fun BigImageCarousel(
             fontWeight = FontWeight.Medium,
             style = MaterialTheme.typography.titleLarge,
         )
-        Box(modifier = Modifier
-            .fillMaxWidth()
-            .wrapContentHeight(),
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight(),
             contentAlignment = Alignment.TopCenter
         ) {
             HorizontalPager(
                 state = state
-                ) { i ->
+            ) { i ->
                 val carouselItem = animeList[i]
                 Surface(
                     modifier = Modifier
@@ -77,9 +77,8 @@ fun BigImageCarousel(
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        AsyncImage(
-                            model = carouselItem.mainPicture.large,
-                            contentScale = ContentScale.Crop,
+                        MahouImage(
+                            imageUrl = carouselItem.mainPicture.large,
                             contentDescription = carouselItem.title
                         )
                         Text(
@@ -107,7 +106,7 @@ fun BigImageCarousel(
 @Preview(showBackground = true)
 @Composable
 fun IndicatorDot(
-    color: Color = MaterialTheme.colorScheme.primary
+    color: Color = MaterialTheme.colorScheme.primary,
 ) {
     Box(
         modifier = Modifier
@@ -123,14 +122,14 @@ fun IndicatorDot(
 fun DotsIndicator(
     modifier: Modifier = Modifier,
     totalDots: Int = 0,
-    selectedDot: Int = 0
+    selectedDot: Int = 0,
 ) {
     val selectedColor: Color = MaterialTheme.colorScheme.primary
     val unSelectedColor: Color = MaterialTheme.colorScheme.secondary
     LazyRow(
         modifier = modifier
             .wrapContentSize()
-            .background(MaterialTheme.colorScheme.surface),
+            .background(MaterialTheme.colorScheme.background),
         horizontalArrangement = Arrangement.spacedBy(4.dp)
 
     ) {

@@ -5,6 +5,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavHostController
+import me.fernandesleite.mahoulist.core.navigation.DefaultTopBar
+import me.fernandesleite.mahoulist.feature.anime.presentation.component.ContentScaffold
 
 @Composable
 fun SeasonalScreen(
@@ -12,5 +14,12 @@ fun SeasonalScreen(
     viewModel: ViewModel,
     navController: NavHostController
 ) {
-    Text(text = "Seasonal")
+    ContentScaffold(
+        modifier = modifier,
+        topBar = {
+            DefaultTopBar(navController = navController)
+        }
+    ) { contentModifier ->
+        Text(modifier = contentModifier, text = "Seasonal Screen")
+    }
 }

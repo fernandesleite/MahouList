@@ -1,5 +1,7 @@
 package me.fernandesleite.mahoulist.core.navigation
 
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -30,18 +32,10 @@ fun MahoulistNavGraph(
     NavHost(
         navController = navController,
         startDestination = Screen.Home.route,
-        enterTransition = {
-            fadeIn(animationSpec = tween(0))
-        },
-        exitTransition = {
-            fadeOut(animationSpec = tween(0))
-        },
-        popEnterTransition = {
-            fadeIn(animationSpec = tween(0))
-        },
-        popExitTransition = {
-            fadeOut(animationSpec = tween(0))
-        }
+        enterTransition = { EnterTransition.None },
+        exitTransition = { ExitTransition.None },
+        popEnterTransition = { EnterTransition.None },
+        popExitTransition = { ExitTransition.None }
     ) {
         composable(
             route = Screen.Login.route

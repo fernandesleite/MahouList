@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -18,6 +17,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
@@ -35,15 +35,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import coil.compose.AsyncImage
-import me.fernandesleite.mahoulist.R
 import me.fernandesleite.mahoulist.core.navigation.ListTopBar
 import me.fernandesleite.mahoulist.core.ui.UiState
 import me.fernandesleite.mahoulist.feature.anime.data.model.remote.animeranking.AnimeRankingType
@@ -51,6 +48,8 @@ import me.fernandesleite.mahoulist.feature.anime.data.model.remote.common.Anime
 import me.fernandesleite.mahoulist.feature.anime.data.model.remote.common.MainPicture
 import me.fernandesleite.mahoulist.feature.anime.presentation.component.ContentScaffold
 import me.fernandesleite.mahoulist.feature.anime.presentation.viewmodel.ListViewModel
+
+private const val COLUMN_SIZE = 3
 
 @Composable
 fun ListScreen(
@@ -72,9 +71,11 @@ fun ListScreen(
         topBar = {
             ListTopBar(
                 toggleButtonSheet = { showBottomSheet = !showBottomSheet },
-                title = (AnimeRankingType.valueOf(listType ?: "ALL").title)
+                title = (AnimeRankingType.valueOf(listType ?: "ALL").title),
+                onBackPressed = {
+                    navHostController.popBackStack()
+                }
             )
-
         },
         uiState = uiState,
         content = content,
@@ -89,9 +90,6 @@ fun ListScreen(
         })
 }
 
-
-private const val COLUMN_SIZE = 3
-
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 private fun ListScreenContent(
@@ -102,7 +100,7 @@ private fun ListScreenContent(
     onCloseBottomSheet: (Boolean) -> Unit,
     onCallMore: () -> Unit = {},
 ) {
-    var selectedViewType by remember { mutableStateOf(ListViewType.LIST) }
+    var selectedViewType by remember { mutableStateOf(ListViewType.GRID) }
 
     ContentScaffold(
         enableDefaultVerticalPadding = false,
@@ -121,7 +119,10 @@ private fun ListScreenContent(
     }
 
     if (showBottomSheet) {
-        ModalBottomSheet(onDismissRequest = { onCloseBottomSheet(false) }) {
+        ModalBottomSheet(
+            onDismissRequest = { onCloseBottomSheet(false) },
+            containerColor = MaterialTheme.colorScheme.background
+        ) {
             val viewOptions = listOf(
                 ListViewType.GRID,
                 ListViewType.LIST
@@ -138,6 +139,14 @@ private fun ListScreenContent(
                 ) {
                     viewOptions.forEachIndexed { index, option ->
                         SegmentedButton(
+                            colors = SegmentedButtonDefaults.colors(
+                                activeContainerColor = MaterialTheme.colorScheme.primary,
+                                activeContentColor = MaterialTheme.colorScheme.onPrimary,
+                                activeBorderColor = MaterialTheme.colorScheme.primary,
+                                inactiveContentColor = MaterialTheme.colorScheme.onSecondary,
+                                inactiveContainerColor = MaterialTheme.colorScheme.secondary,
+                                inactiveBorderColor = MaterialTheme.colorScheme.secondary
+                            ),
                             selected = selectedViewType == option,
                             onClick = { selectedViewType = option },
                             shape = SegmentedButtonDefaults.itemShape(
@@ -191,6 +200,7 @@ private fun ListViewType(
                 modifier = Modifier
                     .clickable { },
                 shape = RoundedCornerShape(8.dp),
+                shadowElevation = 8.dp
             ) {
                 Row(
                     modifier = Modifier
@@ -198,13 +208,12 @@ private fun ListViewType(
                     horizontalArrangement = Arrangement.spacedBy(16.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    AsyncImage(
-                        placeholder = painterResource(id = R.drawable.mahoulist_title),
-                        modifier = Modifier
-                            .width(100.dp)
-                            .height(150.dp),
+                    MahouImage(
+                        imageUrl = anime.mainPicture.medium,
+                        contentDescription = anime.title,
                         contentScale = ContentScale.FillHeight,
-                        model = anime.mainPicture.medium, contentDescription = anime.title
+                        width = 100.dp,
+                        height = 150.dp
                     )
                     Text(
                         textAlign = TextAlign.Start,
@@ -264,19 +273,16 @@ private fun GridViewType(
                         modifier = Modifier
                             .clickable { },
                         shape = RoundedCornerShape(8.dp),
+                        shadowElevation = 8.dp
                     ) {
                         Column(
                             modifier = Modifier.height(250.dp),
                             verticalArrangement = Arrangement.spacedBy(8.dp),
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            AsyncImage(
-                                placeholder = painterResource(id = R.drawable.mahoulist_title),
-                                modifier = Modifier
-                                    .width(150.dp)
-                                    .height(200.dp),
-                                contentScale = ContentScale.Crop,
-                                model = item.mainPicture.medium, contentDescription = item.title
+                            MahouImage(
+                                imageUrl = item.mainPicture.medium,
+                                contentDescription = item.title
                             )
                             Text(
                                 textAlign = TextAlign.Center,
@@ -311,13 +317,15 @@ fun ListScreenPreview() {
         topBar = {
             ListTopBar(
                 toggleButtonSheet = { },
-                title = "List"
-            )
+                title = "List",
+            ) {
+
+            }
 
         },
         uiState = UiState.CONTENT,
         content = listOf(anime, anime, anime, anime, anime, anime, anime, anime),
-        showBottomSheet = false,
+        showBottomSheet = true,
         onCloseBottomSheet = { },
         onCallMore = {
 
