@@ -14,7 +14,7 @@ import me.fernandesleite.mahoulist.core.ui.UiState
 import me.fernandesleite.mahoulist.core.util.Response
 import me.fernandesleite.mahoulist.feature.auth.domain.usecase.SaveAccessTokenUseCase
 import me.fernandesleite.mahoulist.feature.auth.utils.AuthConstants
-import me.fernandesleite.mahoulist.feature.user.domain.GetUserUseCase
+import me.fernandesleite.mahoulist.core.domain.GetUserUseCase
 import java.security.SecureRandom
 import java.util.Base64
 import javax.inject.Inject

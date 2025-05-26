@@ -2,22 +2,19 @@ package me.fernandesleite.mahoulist.core.navigation
 
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import me.fernandesleite.mahoulist.feature.anime.presentation.screen.ListScreen
-import me.fernandesleite.mahoulist.feature.anime.presentation.screen.HomeScreen
-import me.fernandesleite.mahoulist.feature.anime.presentation.screen.MyListScreen
-import me.fernandesleite.mahoulist.feature.anime.presentation.screen.SearchScreen
-import me.fernandesleite.mahoulist.feature.anime.presentation.screen.SeasonalScreen
-import me.fernandesleite.mahoulist.feature.anime.presentation.viewmodel.AnimeViewModel
-import me.fernandesleite.mahoulist.feature.anime.presentation.viewmodel.ListViewModel
+import me.fernandesleite.mahoulist.feature.explorer.ListScreen
+import me.fernandesleite.mahoulist.feature.home.HomeScreen
+import me.fernandesleite.mahoulist.feature.mylist.MyListScreen
+import me.fernandesleite.mahoulist.feature.search.SearchScreen
+import me.fernandesleite.mahoulist.feature.seasonal.SeasonalScreen
+import me.fernandesleite.mahoulist.feature.home.AnimeViewModel
+import me.fernandesleite.mahoulist.feature.explorer.ListViewModel
 import me.fernandesleite.mahoulist.feature.auth.presentation.ui.LoginScreen
 import me.fernandesleite.mahoulist.feature.auth.presentation.viewmodel.OAuthViewModel
 

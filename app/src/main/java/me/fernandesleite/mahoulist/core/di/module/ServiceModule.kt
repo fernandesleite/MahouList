@@ -4,11 +4,11 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import me.fernandesleite.mahoulist.core.data.AnimeService
+import me.fernandesleite.mahoulist.core.data.UserService
 import me.fernandesleite.mahoulist.core.di.qualifier.NoTokenRefresh
 import me.fernandesleite.mahoulist.core.di.qualifier.TokenRefresh
-import me.fernandesleite.mahoulist.feature.anime.data.AnimeService
 import me.fernandesleite.mahoulist.feature.auth.data.OAuthService
-import me.fernandesleite.mahoulist.feature.user.data.UserService
 import retrofit2.Retrofit
 
 @Module

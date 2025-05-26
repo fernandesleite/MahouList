@@ -8,8 +8,8 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import me.fernandesleite.mahoulist.core.database.MahoulistDatabase
-import me.fernandesleite.mahoulist.core.database.UserDao
+import me.fernandesleite.mahoulist.core.data.database.MahoulistDatabase
+import me.fernandesleite.mahoulist.core.data.database.UserDao
 import javax.inject.Singleton
 
 @Module
